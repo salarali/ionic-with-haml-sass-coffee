@@ -7,10 +7,13 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 var coffee = require('gulp-coffee');
+var watch = require('gulp-watch');
+var haml = require('gulp-ruby-haml');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  coffee:
+  coffee: [ './coffee/**/*.coffee'],
+  haml: ['./haml/**/*.haml']
 };
 
 gulp.task('default', ['sass']);
@@ -27,8 +30,32 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
+gulp.task('coffee', function(done) {
+  gulp.src(paths.coffee)
+    .pipe(coffee({bare: true}).on('error', gutil.log))
+    .pipe(gulp.dest('./www/js'))
+    .on('end', done);
+})
+
+gulp.task('haml', function(done) {
+  gulp.src(paths.haml)
+    .pipe(haml())
+    .pipe(gulp.dest('./www/'))
+    .on('end', done);
+});
+
+gulp.task('haml-watch', function(done) {
+  gulp.src(paths.haml, {read: false})
+    .pipe(watch())
+    .pipe(haml())
+    .pipe(gulp.dest('./www/js'))
+    .on('end', done)
+})
+
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.coffee, ['coffee']);
+  gulp.watch(paths.haml, ['haml']);
 });
 
 gulp.task('install', ['git-check'], function() {

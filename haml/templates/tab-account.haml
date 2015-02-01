@@ -1,0 +1,9 @@
+%ion-view{"view-title" => "Account"}
+  %ion-content
+    %ion-list
+      %ion-item.item-toggle
+        Enable Friends
+        %label.toggle
+          %input{"ng-model" => "settings.enableFriends", :type => "checkbox"}/
+          .track
+            .handle
