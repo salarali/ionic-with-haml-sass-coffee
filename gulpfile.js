@@ -9,6 +9,7 @@ var sh = require('shelljs');
 var coffee = require('gulp-coffee');
 var watch = require('gulp-watch');
 var haml = require('gulp-ruby-haml');
+var plumber = require('gulp-plumber');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -16,10 +17,14 @@ var paths = {
   haml: ['./haml/**/*.haml']
 };
 
-gulp.task('default', ['sass']);
+gulp.task('default', ['watch']);
 
 gulp.task('sass', function(done) {
-  gulp.src('./scss/ionic.app.scss')
+  gulp.src(paths.sass)
+    .pipe(plumber(function (error) {
+      gutil.log(error.message);
+      this.emit('end');
+    }))
     .pipe(sass())
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
@@ -32,6 +37,7 @@ gulp.task('sass', function(done) {
 
 gulp.task('coffee', function(done) {
   gulp.src(paths.coffee)
+    .pipe(plumber())
     .pipe(coffee({bare: true}).on('error', gutil.log))
     .pipe(gulp.dest('./www/js'))
     .on('end', done);
@@ -39,6 +45,7 @@ gulp.task('coffee', function(done) {
 
 gulp.task('haml', function(done) {
   gulp.src(paths.haml)
+    .pipe(plumber())
     .pipe(haml())
     .pipe(gulp.dest('./www/'))
     .on('end', done);
