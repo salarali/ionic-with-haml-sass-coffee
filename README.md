@@ -2,7 +2,7 @@
 ## Installing dependices
 ### Gulp
 ```bash
-npm install bower gulp gulp-coffee gulp-concat gulp-minify-css gulp-plumber gulp-rename gulp-ruby-haml gulp-sass gulp-util gulp-watch shelljs --save-dev
+npm install bower gulp gulp-coffee gulp-concat gulp-minify-css gulp-plumber gulp-rename gulp-ruby-haml gulp-sass gulp-util gulp-watch shelljs gulp-cached gulp-dest --save-dev
 ```
 ### Ionic
 ```bash

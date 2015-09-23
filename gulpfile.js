@@ -11,6 +11,7 @@ var watch = require('gulp-watch');
 var haml = require('gulp-ruby-haml');
 var plumber = require('gulp-plumber');
 var dest = require("gulp-dest");
+var cache = require('gulp-cached');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -19,7 +20,7 @@ var paths = {
   haml_index: ['./haml/index.haml']
 };
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['watch', 'haml','coffee', 'haml_index']);
 
 gulp.task('sass', function(done) {
   gulp.src(paths.sass)
@@ -39,36 +40,39 @@ gulp.task('sass', function(done) {
 
 gulp.task('coffee', function(done) {
   gulp.src(paths.coffee)
-    .pipe(watch(paths.coffee))
+    .pipe(cache('coffee'))
     .pipe(plumber())
     .pipe(coffee({bare: true}).on('error', gutil.log))
-    .pipe(dest("./www/js/:basename"))
+    .pipe(dest("./www/js"))
     .pipe(gulp.dest('.'))
     .on('end', done);
 })
 
 gulp.task('haml', function(done) {
   gulp.src(paths.haml)
-    .pipe(watch(paths.haml))
+    .pipe(cache('haml'))
     .pipe(plumber())
     .pipe(haml())
-    .pipe(dest("./www/templates/:basename"))
-    .pipe(gulp.dest('.'))
-    .on('end', done);
-
-  gulp.src(paths.haml_index)
-    .pipe(watch(paths.haml_index))
-    .pipe(plumber())
-    .pipe(haml())
-    .pipe(dest("./www/:basename"))
+    .pipe(dest("./www/templates/"))
     .pipe(gulp.dest('.'))
     .on('end', done);
 });
 
+gulp.task('haml_index', function(done) {
+  gulp.src(paths.haml_index)
+    .pipe(cache('haml_index'))
+    .pipe(plumber())
+    .pipe(haml())
+    .pipe(dest("./www/"))
+    .pipe(gulp.dest('.'))
+    .on('end', done);
+})
 
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
-//  gulp.watch(paths.coffee, ['coffee']);
+  gulp.watch(paths.coffee, ['coffee']);
+  gulp.watch(paths.haml, ['haml']);
+  gulp.watch(paths.haml_index, ['haml_index']);
 });
 
 gulp.task('install', ['git-check'], function() {
